@@ -112,10 +112,14 @@ RobotDriver::RobotDriver(ros::NodeHandle nh, int argc, char **argv) {
   quadKD_ = std::make_shared<quad_utils::QuadKD>();
 
   // Initialize hardware interface
-  if (is_hardware_) {
+  if (is_hardware_) { 
     if (robot_name == "spirit") {
       hardware_interface_ = std::make_shared<SpiritInterface>();
-    } else {
+    } else 
+    if (robot_name == "a1") {
+      hardware_interface_ = std::make_shared<A1_Interface>();
+      ROS_WARN_STREAM("Initilised A1_Interface");
+    } else{
       ROS_ERROR_STREAM("Invalid robot name " << robot_name
                                              << ", returning nullptr");
       hardware_interface_ = nullptr;

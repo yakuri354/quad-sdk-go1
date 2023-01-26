@@ -23,6 +23,14 @@ endif()
 
 include_directories(${MBLINK_DIR}/include)
 link_directories(${MBLINK_DIR}/lib)
+#######
+# LCM #
+#######
+set(LCM_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../unitree_legged_sdk)
+
+include_directories(${LCM_DIR}/include)
+link_directories(${LCM_DIR}/lib)
+set(EXTRA_LIBS -pthread libunitree_legged_sdk_amd64.so lcm)
 
 find_package(Eigen3 REQUIRED)
 
@@ -55,6 +63,8 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${CMAKE_SOURCE_DIR}/../unitree_legged_sdk/include
+  ${CMAKE_SOURCE_DIR}/../unitree_legged_sdk/lib
 )
 
 ## Declare a C++ library for control
@@ -70,12 +80,14 @@ add_library(robot_driver
   src/estimators/ekf_estimator.cpp
   src/hardware_interfaces/hardware_interface.cpp
   src/hardware_interfaces/spirit_interface.cpp
+  src/hardware_interfaces/a1_interface.cpp
 )
 add_dependencies(robot_driver ${robot_driver_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 target_link_libraries(robot_driver
   ${GRMBLINK}
   ${catkin_LIBRARIES}
+  ${EXTRA_LIBS}
 )
 
 ## Declare a C++ executable
