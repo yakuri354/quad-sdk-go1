@@ -43,6 +43,8 @@ find_package(catkin REQUIRED COMPONENTS
   quad_msgs
   quad_utils
   eigen_conversions
+  unitree_legged_msgs
+  unitree_legged_real
 )
 
 ## System dependencies are found with CMake's conventions

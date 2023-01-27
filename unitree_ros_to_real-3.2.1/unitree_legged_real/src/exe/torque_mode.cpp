@@ -9,7 +9,7 @@ Use of this source code is governed by the MPL-2.0 license, see LICENSE.
 #include <boost/thread/mutex.hpp>
 #include <unitree_legged_msgs/LowCmd.h>
 #include <unitree_legged_msgs/LowState.h>
-#include "convert.h"
+#include "unitree_convert.h"
 
 #ifdef SDK3_1
 using namespace aliengo;

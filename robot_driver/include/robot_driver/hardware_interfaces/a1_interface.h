@@ -4,6 +4,12 @@
 #include <robot_driver/hardware_interfaces/hardware_interface.h>
 #include "unitree_legged_sdk/unitree_legged_sdk.h"
 #include "unitree_legged_sdk/unitree_joystick.h"
+#include <unitree_legged_msgs/LowCmd.h>
+#include <unitree_legged_msgs/LowState.h>
+#include <boost/thread.hpp>
+#include <boost/thread/mutex.hpp>
+#include <unitree_convert.h>
+
 using namespace UNITREE_LEGGED_SDK;
 
 class A1_Interface : public HardwareInterface {
@@ -47,17 +53,18 @@ class A1_Interface : public HardwareInterface {
     private:
         void unitree_2quad_data_transform(
             const quad_msgs::LegCommandArray& last_leg_command_array_msg,
-            LowCmd& cmd);
+            unitree_legged_msgs::LowCmd& cmd);
 
         void quad_2unitree_data_transform(
             const quad_msgs::LegCommandArray& last_leg_command_array_msg,
-            LowCmd& cmd);
+            unitree_legged_msgs::LowCmd& cmd);
 
-        Safety safe;
-        UDP udp;
-        LowCmd cmd = {0};
-        LowState state = {0};
-        int motiontime = 0;
+        pthread_t tid;
+        UNITREE_LEGGED_SDK::LCM roslcm;
+        LowCmd SendLowLCM = {0};
+        LowState RecvLowLCM = {0};
+        unitree_legged_msgs::LowCmd SendLowROS;
+        unitree_legged_msgs::LowState RecvLowROS;       
 };
 
 

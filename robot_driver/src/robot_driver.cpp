@@ -115,6 +115,7 @@ RobotDriver::RobotDriver(ros::NodeHandle nh, int argc, char **argv) {
   if (is_hardware_) { 
     if (robot_name == "spirit") {
       hardware_interface_ = std::make_shared<SpiritInterface>();
+      ROS_WARN_STREAM("Initilised SpiritInterface");
     } else 
     if (robot_name == "a1") {
       hardware_interface_ = std::make_shared<A1_Interface>();
@@ -572,19 +573,21 @@ void RobotDriver::spin() {
   while (ros::ok()) {
     // Collect new messages on subscriber topics and publish heartbeat
     ros::spinOnce();
-
+    
     // Get the newest state information
     updateState();
 
     // Compute the leg command and publish if valid
     bool is_valid = updateControl();
     publishControl(is_valid);
-
-    // // Publish state and heartbeat
+    publishControl(true);
+    
+    // Publish state and heartbeat
     publishState();
     publishHeartbeat();
-
+    
     // Enforce update rate
+    //ros::spinOnce();
     r.sleep();
   }
 

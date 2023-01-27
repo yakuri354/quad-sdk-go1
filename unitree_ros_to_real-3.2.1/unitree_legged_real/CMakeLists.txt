@@ -9,7 +9,13 @@ find_package(catkin REQUIRED COMPONENTS
     unitree_legged_msgs
 )
 
-catkin_package()
+
+#catkin_package()
+
+catkin_package(
+   INCLUDE_DIRS include
+   LIBRARIES implementation
+)
 
 include_directories(
     include
@@ -23,7 +29,20 @@ set(CMAKE_CXX_FLAGS "-O3")
 include_directories($ENV{UNITREE_LEGGED_SDK_PATH}/include)
 link_directories($ENV{UNITREE_LEGGED_SDK_PATH}/lib)
 string(CONCAT LEGGED_SDK_NAME libunitree_legged_sdk_$ENV{UNITREE_PLATFORM}.so)
-set(EXTRA_LIBS ${LEGGED_SDK_NAME} lcm)
+
+add_library(implementation
+    include/unitree_convert.cpp
+)
+
+include_directories()
+set(EXTRA_LIBS 
+    ${LEGGED_SDK_NAME} 
+    lcm 
+    implementation
+)
+
+
+target_link_libraries(implementation ${LEGGED_SDK_NAME} lcm ${catkin_LIBRARIES})
 
 add_definitions(-DSDK3_2)
 message(STATUS $ENV{UNITREE_LEGGED_SDK_PATH}/examples/lcm_server.cpp)
