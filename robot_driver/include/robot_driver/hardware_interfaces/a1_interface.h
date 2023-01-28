@@ -9,63 +9,80 @@
 #include <boost/thread.hpp>
 #include <boost/thread/mutex.hpp>
 #include <unitree_convert.h>
+#include <map>
 
 using namespace UNITREE_LEGGED_SDK;
 
-class A1_Interface : public HardwareInterface {
-    public:
-        /**
-         * @brief Constructor for A1_Interface
-         * @return Constructed object of type A1_Interface
-         */
-        A1_Interface();
+class A1_Interface : public HardwareInterface
+{
+public:
+    /**
+     * @brief Constructor for A1_Interface
+     * @return Constructed object of type A1_Interface
+     */
+    A1_Interface();
 
-        /**
-         * @brief Load the hardware interface
-         * @param[in] argc Argument count
-         * @param[in] argv Argument vector
-         */
-        virtual void loadInterface(int argc, char** argv);
+    /**
+     * @brief Load the hardware interface
+     * @param[in] argc Argument count
+     * @param[in] argv Argument vector
+     */
+    virtual void loadInterface(int argc, char **argv);
 
-        /**
-         * @brief Unload the hardware interface
-         */
-        virtual void unloadInterface();
+    /**
+     * @brief Unload the hardware interface
+     */
+    virtual void unloadInterface();
 
-        /**
-         * @brief Send commands to the robot via the mblink protocol
-         * @param[in] leg_command_array_msg Message containing leg commands
-         * @param[in] user_data Vector containing user data
-         * @return boolean indicating success of transmission
-         */
-        virtual bool send(const quad_msgs::LegCommandArray& leg_command_array_msg,
-                        const Eigen::VectorXd& user_tx_data);
+    /**
+     * @brief Send commands to the robot via the mblink protocol
+     * @param[in] leg_command_array_msg Message containing leg commands
+     * @param[in] user_data Vector containing user data
+     * @return boolean indicating success of transmission
+     */
+    virtual bool send(const quad_msgs::LegCommandArray &leg_command_array_msg,
+                      const Eigen::VectorXd &user_tx_data);
 
-        /**
-         * @brief Recieve data from the robot via the mblink protocol
-         * @param[out] joint_state_msg Message containing joint state information
-         * @param[out] imu_msg Message containing imu information
-         * @param[out] user_data Vector containing user data
-         * @return Boolean for whether data was successfully received
-         */
-        virtual bool recv(sensor_msgs::JointState& joint_state_msg,
-                        sensor_msgs::Imu& imu_msg, Eigen::VectorXd& user_rx_data);
-    private:
-        void unitree_2quad_data_transform(
-            const quad_msgs::LegCommandArray& last_leg_command_array_msg,
-            unitree_legged_msgs::LowCmd& cmd);
+    /**
+     * @brief Recieve data from the robot via the mblink protocol
+     * @param[out] joint_state_msg Message containing joint state information
+     * @param[out] imu_msg Message containing imu information
+     * @param[out] user_data Vector containing user data
+     * @return Boolean for whether data was successfully received
+     */
+    virtual bool recv(sensor_msgs::JointState &joint_state_msg,
+                      sensor_msgs::Imu &imu_msg, Eigen::VectorXd &user_rx_data);
 
-        void quad_2unitree_data_transform(
-            const quad_msgs::LegCommandArray& last_leg_command_array_msg,
-            unitree_legged_msgs::LowCmd& cmd);
+private:
+    void unitree_2quad_data_transform(
+        const quad_msgs::LegCommandArray &last_leg_command_array_msg,
+        unitree_legged_msgs::LowCmd &cmd);
 
-        pthread_t tid;
-        UNITREE_LEGGED_SDK::LCM roslcm;
-        LowCmd SendLowLCM = {0};
-        LowState RecvLowLCM = {0};
-        unitree_legged_msgs::LowCmd SendLowROS;
-        unitree_legged_msgs::LowState RecvLowROS;       
+    void quad_2unitree_data_transform(
+        const quad_msgs::LegCommandArray &last_leg_command_array_msg,
+        unitree_legged_msgs::LowCmd &cmd);
+
+    pthread_t tid;
+    UNITREE_LEGGED_SDK::LCM roslcm;
+    LowCmd SendLowLCM = {0};
+    LowState RecvLowLCM = {0};
+    unitree_legged_msgs::LowCmd SendLowROS;
+    unitree_legged_msgs::LowState RecvLowROS;
+    // TODO: Check the correctness of such transform
+    std::map<int, int> quad2uni{
+        {0, FR_0},
+        {1, FR_1},
+        {2, FR_2},
+        {3, FL_0},
+        {4, FL_1},
+        {5, FL_2},
+        {6, RR_0},
+        {7, RR_1},
+        {8, RR_2},
+        {9, RL_0},
+        {10, RL_1},
+        {11, RL_2}};
+    std::map<int, int> uni2quad;
 };
 
-
-#endif  // A1_INTERFACE_H
+#endif // A1_INTERFACE_H
