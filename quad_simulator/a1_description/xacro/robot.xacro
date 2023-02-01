@@ -118,26 +118,26 @@
     </link>
 
     <!--FL-->
-    <xacro:leg suffix="0" mirror="1" mirror_dae="True" front_hind="1" front_hind_dae="True"
-               hipJointName="0" kneeJointName="1" abductionJointName="8">
+    <xacro:leg suffix="1" mirror="1" mirror_dae="True" front_hind="1" front_hind_dae="True"
+               hipJointName="4" kneeJointName="5" abductionJointName="3">
         <origin rpy="0 0 0" xyz="${leg_offset_x} ${leg_offset_y} 0"/>
     </xacro:leg>
 
     <!--RL-->
-    <xacro:leg suffix="1" mirror="1" mirror_dae="True" front_hind="-1" front_hind_dae="False"
-               hipJointName="2" kneeJointName="3" abductionJointName="9">
+    <xacro:leg suffix="3" mirror="1" mirror_dae="True" front_hind="-1" front_hind_dae="False"
+               hipJointName="10" kneeJointName="11" abductionJointName="9">
         <origin rpy="0 0 0" xyz="${-leg_offset_x} ${leg_offset_y} 0"/>
     </xacro:leg>
 
     <!--FR-->
-    <xacro:leg suffix="2" mirror="-1" mirror_dae="False" front_hind="1" front_hind_dae="True"
-               hipJointName="4" kneeJointName="5" abductionJointName="10">
+    <xacro:leg suffix="0" mirror="-1" mirror_dae="False" front_hind="1" front_hind_dae="True"
+               hipJointName="1" kneeJointName="2" abductionJointName="0">
         <origin rpy="0 0 0" xyz="${leg_offset_x} ${-leg_offset_y} 0"/>
     </xacro:leg>
 
     <!--RR-->
-    <xacro:leg suffix="3" mirror="-1" mirror_dae="False" front_hind="-1" front_hind_dae="False"
-               hipJointName="6" kneeJointName="7" abductionJointName="11">
+    <xacro:leg suffix="2" mirror="-1" mirror_dae="False" front_hind="-1" front_hind_dae="False"
+               hipJointName="7" kneeJointName="8" abductionJointName="6">
         <origin rpy="0 0 0" xyz="${-leg_offset_x} ${-leg_offset_y} 0"/>
     </xacro:leg>
 

@@ -32,11 +32,12 @@ A1_Interface::A1_Interface() : roslcm(LOWLEVEL)
     {
         SendLowROS.motorCmd[i].mode = 0x0A; // motor switch to servo (PMSM) mode
     }
+    uni2quad = reverse_map(quad2uni);
 }
 
 void A1_Interface::loadInterface(int argc, char **argv)
 {
-    uni2quad = reverse_map(quad2uni);
+
     sleep(3);
 }
 
@@ -83,16 +84,38 @@ bool A1_Interface::recv(
     // Converting unitree joints positions and joints velocities
     for (int i = 0; i < 12; ++i)
     {
-        joint_state_msg.name[i] = i;
-        joint_state_msg.position[i] = RecvLowROS.motorState[quad2uni[i]].q;
-        joint_state_msg.velocity[i] = RecvLowROS.motorState[quad2uni[i]].dq;
-        joint_state_msg.effort[i] = RecvLowLCM.motorState[quad2uni[i]].tauEst; // No need extra converstion because it already done on robot side
+        joint_state_msg.name[i] = std::to_string(i);
+        if (i < 9)
+        {
+            joint_state_msg.position[i] = RecvLowROS.motorState[i].q;
+        }
+        else
+        {
+            joint_state_msg.position[i] = RecvLowROS.motorState[i].q;
+        }
+        joint_state_msg.velocity[i] = RecvLowROS.motorState[i].dq;
+        joint_state_msg.effort[i] = RecvLowLCM.motorState[i].tauEst; // No need extra converstion because it already done on robot side
     }
     // Quaternion
-    imu_msg.orientation.x = RecvLowLCM.imu.quaternion[0];
-    imu_msg.orientation.y = RecvLowLCM.imu.quaternion[1];
-    imu_msg.orientation.z = RecvLowLCM.imu.quaternion[2];
-    imu_msg.orientation.w = RecvLowLCM.imu.quaternion[3];
+    // imu_msg.orientation.x = RecvLowLCM.imu.quaternion[1];
+    // imu_msg.orientation.y = RecvLowLCM.imu.quaternion[2];
+    // imu_msg.orientation.z = RecvLowLCM.imu.quaternion[3];
+    // imu_msg.orientation.w = RecvLowLCM.imu.quaternion[0];
+    geometry_msgs::Quaternion orientation_msg;
+    tf2::Quaternion quat_tf;
+    Eigen::Vector3f rpy;
+    quat_tf.setRPY(0, 0, 0);
+    tf2::convert(quat_tf, orientation_msg);
+    imu_msg.header.frame_id = "body";
+    // Angular velocities from gyroscope
+    // imu_msg.angular_velocity.x = 0;
+    // imu_msg.angular_velocity.y = 0;
+    // imu_msg.angular_velocity.z = 0;
+    // // Linear velocities form acceleremeter
+    // imu_msg.linear_acceleration.x = 0;
+    // imu_msg.linear_acceleration.y = 0;
+    // imu_msg.linear_acceleration.z = -9.81;
+
     // Angular velocities from gyroscope
     imu_msg.angular_velocity.x = RecvLowLCM.imu.gyroscope[0];
     imu_msg.angular_velocity.y = RecvLowLCM.imu.gyroscope[1];
@@ -101,8 +124,8 @@ bool A1_Interface::recv(
     imu_msg.linear_acceleration.x = RecvLowLCM.imu.accelerometer[0];
     imu_msg.linear_acceleration.y = RecvLowLCM.imu.accelerometer[1];
     imu_msg.linear_acceleration.z = RecvLowLCM.imu.accelerometer[2];
-    // std::cout << "RECVESTRECVESTRECVESTRECVESTRECVEST" <<std::endl;
-    // roslcm.Recv();
+    std::cout << "RECVESTRECVESTRECVESTRECVESTRECVEST" << std::endl;
+    roslcm.Recv();
 
     return true;
 }

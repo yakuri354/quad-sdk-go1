@@ -1,5 +1,6 @@
 <launch>
-    <arg name="robot_type" default="spirit"/>
+    <arg name="robot_type" default="a1"/>
+    <arg name="user_debug" default="false"/>
 
     <rosparam command="load" file="$(find quad_utils)/config/topics_robot.yaml" />
     <param name="enable_statistics" type="bool" value="true" />
@@ -13,6 +14,7 @@
     <group if="$(eval arg('robot_type') == 'a1')">
         <rosparam command="load" file="$(find quad_utils)/config/a1.yaml" />
         <param name="robot_description_sdf" textfile="$(find a1_description)/sdf_mesh/a1.sdf" />
-        <param name="robot_description" command="cat $(find a1_description)/urdf/a1.urdf" />
+        <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find a1_description)/xacro/robot.xacro'
+            DEBUG:=$(arg user_debug)"/>
     </group>
 </launch>
