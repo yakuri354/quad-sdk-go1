@@ -11,14 +11,14 @@
     <xacro:property name="rolloverProtection" value="false"/>
 
     <!-- Debug mode will hung up the robot, use "true" or "false" to switch it. -->
-    <xacro:if value="$(arg DEBUG)">
+    <!-- <xacro:if value="$(arg DEBUG)">
         <link name="world"/>
         <joint name="base_static_joint" type="fixed">
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <parent link="world"/>
             <child link="body"/>
         </joint>
-    </xacro:if> 
+    </xacro:if>  -->
 
     <link name="body">
         <visual>
@@ -118,26 +118,26 @@
     </link>
 
     <!--FL-->
-    <xacro:leg suffix="1" mirror="1" mirror_dae="True" front_hind="1" front_hind_dae="True"
-               hipJointName="4" kneeJointName="5" abductionJointName="3">
+    <xacro:leg suffix="0" mirror="1" mirror_dae="True" front_hind="1" front_hind_dae="True"
+               hipJointName="0" kneeJointName="1" abductionJointName="8">
         <origin rpy="0 0 0" xyz="${leg_offset_x} ${leg_offset_y} 0"/>
     </xacro:leg>
 
     <!--RL-->
-    <xacro:leg suffix="3" mirror="1" mirror_dae="True" front_hind="-1" front_hind_dae="False"
-               hipJointName="10" kneeJointName="11" abductionJointName="9">
+    <xacro:leg suffix="1" mirror="1" mirror_dae="True" front_hind="-1" front_hind_dae="False"
+               hipJointName="2" kneeJointName="3" abductionJointName="9">
         <origin rpy="0 0 0" xyz="${-leg_offset_x} ${leg_offset_y} 0"/>
     </xacro:leg>
 
     <!--FR-->
-    <xacro:leg suffix="0" mirror="-1" mirror_dae="False" front_hind="1" front_hind_dae="True"
-               hipJointName="1" kneeJointName="2" abductionJointName="0">
+    <xacro:leg suffix="2" mirror="-1" mirror_dae="False" front_hind="1" front_hind_dae="True"
+               hipJointName="4" kneeJointName="5" abductionJointName="10">
         <origin rpy="0 0 0" xyz="${leg_offset_x} ${-leg_offset_y} 0"/>
     </xacro:leg>
 
     <!--RR-->
-    <xacro:leg suffix="2" mirror="-1" mirror_dae="False" front_hind="-1" front_hind_dae="False"
-               hipJointName="7" kneeJointName="8" abductionJointName="6">
+    <xacro:leg suffix="3" mirror="-1" mirror_dae="False" front_hind="-1" front_hind_dae="False"
+               hipJointName="6" kneeJointName="7" abductionJointName="11">
         <origin rpy="0 0 0" xyz="${-leg_offset_x} ${-leg_offset_y} 0"/>
     </xacro:leg>
 

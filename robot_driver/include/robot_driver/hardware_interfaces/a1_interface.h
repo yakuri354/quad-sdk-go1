@@ -10,7 +10,8 @@
 #include <boost/thread/mutex.hpp>
 #include <unitree_convert.h>
 #include <map>
-
+#include <tuple>
+#include <vector>
 using namespace UNITREE_LEGGED_SDK;
 
 class A1_Interface : public HardwareInterface
@@ -54,10 +55,13 @@ public:
                       sensor_msgs::Imu &imu_msg, Eigen::VectorXd &user_rx_data);
 
 private:
-    void unitree_2quad_data_transform(
-        const quad_msgs::LegCommandArray &last_leg_command_array_msg,
-        unitree_legged_msgs::LowCmd &cmd);
+    void uni2quad_data_transform(
+        const unitree_legged_msgs::LowState &low_state_msg,
+        sensor_msgs::JointState &joint_state_msg);
 
+    std::tuple<float, float, float> convert_joint_state_uni2quad(
+        const int quad_motor_idx,
+        const unitree_legged_msgs::MotorState &motor_state_msg);
     void quad_2unitree_data_transform(
         const quad_msgs::LegCommandArray &last_leg_command_array_msg,
         unitree_legged_msgs::LowCmd &cmd);
@@ -70,18 +74,18 @@ private:
     unitree_legged_msgs::LowState RecvLowROS;
     // TODO: Check the correctness of such transform
     std::map<int, int> quad2uni{
-        {0, FR_0},
-        {1, FR_1},
-        {2, FR_2},
-        {3, FL_0},
-        {4, FL_1},
-        {5, FL_2},
-        {6, RR_0},
-        {7, RR_1},
-        {8, RR_2},
+        {0, FL_1},
+        {1, FL_2},
+        {2, RL_1},
+        {3, RL_2},
+        {4, FR_1},
+        {5, FR_2},
+        {6, RR_1},
+        {7, RR_2},
+        {8, FL_0},
         {9, RL_0},
-        {10, RL_1},
-        {11, RL_2}};
+        {10, FR_0},
+        {11, RR_0}};
     std::map<int, int> uni2quad;
 };
 
