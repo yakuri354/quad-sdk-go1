@@ -5,7 +5,7 @@
       <arg name="robot_type" value="$(arg robot_type)"/>
     </include>
     
-    <arg name="mocap" default="true" />
+    <arg name="mocap" default="false" />
     <arg name="logging" default="false" />
     <arg name="controller" default="inverse_dynamics" />
     <arg name="is_hardware" default="true" />
@@ -14,6 +14,7 @@
     <node name="robot_driver" pkg="robot_driver" type="robot_driver_node" output="screen">
         <param name="controller" value="$(arg controller)" />
         <param name="is_hardware" value="$(arg is_hardware)" />
+        <param name="robot_type" value="$(arg robot_type)"/>
     </node>
 
     <!-- Launch the mocap node if specified-->

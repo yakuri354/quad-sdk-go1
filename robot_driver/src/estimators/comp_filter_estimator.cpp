@@ -46,9 +46,75 @@ bool CompFilterEstimator::updateOnce(
   last_robot_state_msg_.body.twist.linear = last_imu_msg_.linear_acceleration;
   last_robot_state_msg_.body.pose.orientation = last_imu_msg_.orientation;
   last_robot_state_msg_.joints = last_joint_state_msg_;
+  
+  last_robot_state_msg_.header.stamp = state_timestamp;
   last_joint_state_msg_.header.stamp = state_timestamp;
-  last_imu_msg_.header.stamp = state_timestamp;
+  //last_imu_msg_.header.stamp = state_timestamp;
+  last_robot_state_msg_.body.pose.position.z = 0.3;
+  last_robot_state_msg_.body.pose.position.x = x_pos;
+  x_pos += 0.0001;
+  if(x_pos > 3)
+    x_pos = 0.0f;
 
+  // // Check if mocap data was received
+  // if (last_mocap_msg_ == NULL) {
+  //   ROS_WARN_THROTTLE(1, "No body pose (mocap) recieved");
+  //   return false;
+  // }
+  // // Copy mocap readings
+  // last_robot_state_msg_.body.pose.orientation =
+  //     last_mocap_msg_->pose.orientation;
+  // last_robot_state_msg_.body.pose.position = last_mocap_msg_->pose.position;
+
+  // // IMU is in body frame
+  // Eigen::Vector3d acc;
+  // acc << last_imu_msg_.linear_acceleration.x,
+  //     last_imu_msg_.linear_acceleration.y, last_imu_msg_.linear_acceleration.z;
+
+  // Eigen::Matrix3d rot;
+  // tf2::Quaternion q(
+  //     last_mocap_msg_->pose.orientation.x, last_mocap_msg_->pose.orientation.y,
+  //     last_mocap_msg_->pose.orientation.z, last_mocap_msg_->pose.orientation.w);
+  // q.normalize();
+  // tf2::Matrix3x3 m(q);
+  // Eigen::Vector3d rpy;
+  // m.getRPY(rpy[0], rpy[1], rpy[2]);
+  // quadKD_->getRotationMatrix(rpy, rot);
+  // acc = rot * acc;
+
+  // // Ignore gravity
+  // acc[2] -= 9.81;
+
+  // if (!high_pass_filter.init) {
+  //   // Init filter, we want to make sure that if the input is zero, the
+  //   // output velocity is zero and the state remains the same
+  //   for (size_t i = 0; i < 3; i++) {
+  //     high_pass_filter.x.at(i) << 0, 0;
+  //   }
+  //   high_pass_filter.init = true;
+  // }
+
+  // // Apply filter
+  // for (size_t i = 0; i < 3; i++) {
+  //   // Compute outputs
+  //   imu_vel_estimate_(i) = (high_pass_filter.C * high_pass_filter.x.at(i) +
+  //                           high_pass_filter.D * acc(i))(0, 0);
+
+  //   // Compute states
+  //   high_pass_filter.x.at(i) = high_pass_filter.A * high_pass_filter.x.at(i) +
+  //                              high_pass_filter.B * acc(i);
+  // }
+
+  // // Complementary filter
+  // vel_estimate_ = imu_vel_estimate_ + mocap_vel_estimate_;
+  // quad_utils::Eigen3ToVector3Msg(vel_estimate_,
+  //                                last_robot_state_msg_.body.twist.linear);
+
+  // Fill in the rest of the state message (foot state and headers)
+  quad_utils::fkRobotState(*quadKD_, last_robot_state_msg_);
+  quad_utils::updateStateHeaders(last_robot_state_msg_, state_timestamp, "map",
+                                 0);
+  //std::cout << "New header" << last_imu_msg_.header.stamp << std::endl;
   return true;
 }
 

@@ -45,7 +45,7 @@ class CompFilterEstimator : public StateEstimator {
     // Filter initialization indicator
     bool init;
   };
-
+  float x_pos = 0.0f;
   /// Low pass filter
   Filter low_pass_filter;
 
