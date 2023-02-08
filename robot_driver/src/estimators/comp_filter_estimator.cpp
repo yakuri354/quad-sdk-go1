@@ -52,10 +52,11 @@ bool CompFilterEstimator::updateOnce(
   //last_imu_msg_.header.stamp = state_timestamp;
   last_robot_state_msg_.body.pose.position.z = 0.3;
   last_robot_state_msg_.body.pose.position.x = x_pos;
-  x_pos += 0.0001;
-  if(x_pos > 3)
-    x_pos = 0.0f;
-
+  x_pos += dx;
+  if(x_pos > 3 || x_pos < -1){
+    dx = -dx;
+  }
+    
   // // Check if mocap data was received
   // if (last_mocap_msg_ == NULL) {
   //   ROS_WARN_THROTTLE(1, "No body pose (mocap) recieved");
