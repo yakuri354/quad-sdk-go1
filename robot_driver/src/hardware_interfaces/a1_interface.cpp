@@ -87,12 +87,23 @@ bool A1_Interface::recv(
   
 
     uni2quad_data_transform(RecvLowROS, joint_state_msg);
+
     // Quaternion
-    imu_msg.orientation.x = RecvLowLCM.imu.quaternion[1];
-    imu_msg.orientation.y = RecvLowLCM.imu.quaternion[2];
-    imu_msg.orientation.z = RecvLowLCM.imu.quaternion[3];
-    imu_msg.orientation.w = RecvLowLCM.imu.quaternion[0];
-    imu_msg.header.frame_id = "body";
+    geometry_msgs::Quaternion orientation_msg;
+    tf2::Quaternion quat_tf;
+    Eigen::Vector3f rpy;
+    quat_tf.setRPY(
+        RecvLowLCM.imu.rpy[0],
+        RecvLowLCM.imu.rpy[1],
+        RecvLowLCM.imu.rpy[2]);
+    tf2::convert(quat_tf, orientation_msg);
+    imu_msg.orientation = orientation_msg;
+    // // Quaternion
+    // imu_msg.orientation.x = RecvLowLCM.imu.quaternion[1];
+    // imu_msg.orientation.y = RecvLowLCM.imu.quaternion[2];
+    // imu_msg.orientation.z = RecvLowLCM.imu.quaternion[3];
+    // imu_msg.orientation.w = RecvLowLCM.imu.quaternion[0];
+    // imu_msg.header.frame_id = "body";
 
     // Angular velocities from gyroscope
     imu_msg.angular_velocity.x = RecvLowLCM.imu.gyroscope[0];
