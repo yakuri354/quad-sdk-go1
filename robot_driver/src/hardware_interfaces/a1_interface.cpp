@@ -35,10 +35,15 @@ A1_Interface::A1_Interface() : roslcm(LOWLEVEL)
     {
         SendLowROS.motorCmd[i].mode = 0x0A; // motor switch to servo (PMSM) mode
     }
+    uni2quad = reverse_map(quad2uni);
 }
 
 void A1_Interface::loadInterface(int argc, char **argv)
 {
+<<<<<<< HEAD
+=======
+
+>>>>>>> ros_to_real
     sleep(3);
 }
 
@@ -78,31 +83,21 @@ bool A1_Interface::recv(
 {
     // Getting LCM state msg
     roslcm.Get(RecvLowLCM);
-    fill_testLCMmsg_sample(RecvLowLCM);
     // Converting to ROS msg
     RecvLowROS = ToRos(RecvLowLCM);
 
-
-    std::vector<std::string> joint_names_ = {"8",  "0", "1", "9",  "2", "3",
-                                           "10", "4", "5", "11", "6", "7"};
     // Converting unitree joints positions and joints velocities
-    for (int i = 0; i < joint_names_.size(); ++i)
-    {
-        joint_state_msg.name[i] = joint_names_[i];
-        joint_state_msg.position[i] = RecvLowROS.motorState[quad2uni[i]].q;
-        joint_state_msg.velocity[i] = RecvLowROS.motorState[quad2uni[i]].dq;
-        joint_state_msg.effort[i] = RecvLowLCM.motorState[quad2uni[i]].tauEst; // No need extra converstion because it already done on robot side
-    }
+
+  
+
+    uni2quad_data_transform(RecvLowROS, joint_state_msg);
     // Quaternion
-    geometry_msgs::Quaternion orientation_msg;
-    tf2::Quaternion quat_tf;
-    Eigen::Vector3f rpy;
-    quat_tf.setRPY(
-        RecvLowLCM.imu.rpy[0],
-        RecvLowLCM.imu.rpy[1],
-        RecvLowLCM.imu.rpy[2]);
-    tf2::convert(quat_tf, orientation_msg);
-    imu_msg.orientation = orientation_msg;
+    imu_msg.orientation.x = RecvLowLCM.imu.quaternion[1];
+    imu_msg.orientation.y = RecvLowLCM.imu.quaternion[2];
+    imu_msg.orientation.z = RecvLowLCM.imu.quaternion[3];
+    imu_msg.orientation.w = RecvLowLCM.imu.quaternion[0];
+    imu_msg.header.frame_id = "body";
+
     // Angular velocities from gyroscope
     imu_msg.angular_velocity.x = RecvLowLCM.imu.gyroscope[0];
     imu_msg.angular_velocity.y = RecvLowLCM.imu.gyroscope[1];
@@ -117,10 +112,47 @@ bool A1_Interface::recv(
 
 void A1_Interface::unloadInterface() {}
 
-void A1_Interface::unitree_2quad_data_transform(
-    const quad_msgs::LegCommandArray &last_leg_command_array_msg,
-    unitree_legged_msgs::LowCmd &cmd)
+/* Returns vector with position, velocity and effort in quad frame*/
+std::tuple<float, float, float> A1_Interface::convert_joint_state_uni2quad(
+    const int quad_motor_idx,
+    const unitree_legged_msgs::MotorState &motor_state_msg)
 {
+    int sign;
+    float init_pose;
+    if (quad_motor_idx < 8)
+    {
+        if (quad_motor_idx % 2 == 0)
+        {
+            sign = -1;
+            init_pose = M_PI / 2;
+        }
+        else
+        {
+            sign = 1;
+            init_pose = M_PI;
+        }
+    }
+    else
+    {
+        sign = 1;
+        init_pose = 0.;
+    }
+    float pose = sign * motor_state_msg.q + init_pose;
+    float speed = sign * motor_state_msg.dq;
+    float torgue = sign * motor_state_msg.tauEst;
+    return std::tuple<float, float, float>{pose, speed, torgue};
+}
+
+void A1_Interface::uni2quad_data_transform(
+    const unitree_legged_msgs::LowState &low_state_msg,
+    sensor_msgs::JointState &joint_state_msg)
+{
+    for (int i = 0; i < 12; ++i)
+    {
+        joint_state_msg.name[i] = std::to_string(i);
+        std::tie(joint_state_msg.position[i], joint_state_msg.velocity[i], joint_state_msg.effort[i]) = convert_joint_state_uni2quad(i, low_state_msg.motorState[quad2uni[i]]);
+        // std::tie(joint_state_msg.position[i], joint_state_msg.velocity[i], joint_state_msg.effort[i]) = convert_joint_state_uni2quad(i, RecvLowROS.motorState[quad2uni[i]]);
+    }
 }
 
 void A1_Interface::quad_2unitree_data_transform(

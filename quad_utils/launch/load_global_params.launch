@@ -1,6 +1,7 @@
 <launch>
     <arg name="robot_type" default="spirit"/>
     <arg name="load_robot_params" default="false"/>
+    <arg name="user_debug" default="false"/>
 
     <rosparam command="load" file="$(find global_body_planner)/global_body_planner.yaml" />
     <rosparam command="load" file="$(find local_planner)/local_planner.yaml" />
@@ -21,7 +22,8 @@
 
     <group if="$(eval arg('robot_type') == 'a1')">
         <param name="robot_description_sdf" textfile="$(find a1_description)/sdf_mesh/a1.sdf" />
-        <param name="robot_description" command="cat $(find a1_description)/urdf/a1.urdf" />
+        <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find a1_description)/xacro/robot.xacro'
+            DEBUG:=$(arg user_debug)"/>
     </group>
 
     <group if="$(arg load_robot_params)">
