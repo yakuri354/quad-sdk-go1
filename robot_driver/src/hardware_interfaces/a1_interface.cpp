@@ -40,10 +40,6 @@ A1_Interface::A1_Interface() : roslcm(LOWLEVEL)
 
 void A1_Interface::loadInterface(int argc, char **argv)
 {
-<<<<<<< HEAD
-=======
-
->>>>>>> ros_to_real
     sleep(3);
 }
 
