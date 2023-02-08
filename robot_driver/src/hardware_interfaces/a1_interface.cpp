@@ -2,7 +2,7 @@
 
 /// Given a map from keys to values, creates a new map from values to keys
 
-void fill_testLCMmsg_sample(LowState& msg);
+void fill_testLCMmsg_sample(LowState &msg);
 
 template <typename K, typename V>
 static std::map<V, K> reverse_map(const std::map<K, V> &m)
@@ -48,28 +48,51 @@ bool A1_Interface::send(
     const Eigen::VectorXd &user_tx_data)
 {
 
-    roslcm.Get(RecvLowLCM);
-    
-    RecvLowROS = ToRos(RecvLowLCM);
-    
-    SendLowROS.motorCmd[FR_0].tau = -0.65f;
-    SendLowROS.motorCmd[FL_0].tau = +0.65f;
-    SendLowROS.motorCmd[RR_0].tau = -0.65f;
-    SendLowROS.motorCmd[RL_0].tau = +0.65f;
+    std::map<int, int> uni_2quad_foot{
+        {2, 0},
+        {0, 3},
+        {3, 6},
+        {1, 9}};
 
-    float torque = 0.0f;
+    for (int i = 0; i < 4; ++i)
+    {
+        quad_msgs::LegCommand leg_command =
+            last_leg_command_array_msg.leg_commands.at(i);
 
-    SendLowROS.motorCmd[FL_1].q = PosStopF;
-    SendLowROS.motorCmd[FL_1].dq = VelStopF;
-    SendLowROS.motorCmd[FL_1].Kp = 0;
-    SendLowROS.motorCmd[FL_1].Kd = 0;
-    SendLowROS.motorCmd[FL_1].tau = torque;
+        float heartbeat = 0.;
+        float phi_0;
+        int sign;
+        int uni_leg_idx = uni_2quad_foot[i];
+        for (int j = 0; j < 3; ++j)
+        {
+            if (j == 0)
+            {
+                phi_0 = 0;
+                sign = 1;
+            }
+            if (j == 1)
+            {
+                phi_0 = M_PI / 2;
+                sign = -1;
+            }
+            if (j == 2)
+            {
+                phi_0 = M_PI;
+                sign = 1;
+            }
 
-    // quad_2unitree_data_transform(last_leg_command_array_msg, SendLowROS);
+            SendLowROS.motorCmd[uni_leg_idx + j].q = (leg_command.motor_commands.at(j).pos_setpoint - phi_0) / sign;
+            std::cout << "For " << j << " joint publishing position = " << (leg_command.motor_commands.at(j).pos_setpoint - phi_0) / sign << "\n";
+            SendLowROS.motorCmd[uni_leg_idx + j].dq = heartbeat * leg_command.motor_commands.at(j).vel_setpoint / sign;
+            SendLowROS.motorCmd[uni_leg_idx + j].tau = heartbeat * leg_command.motor_commands.at(j).torque_ff / sign;
+            SendLowROS.motorCmd[uni_leg_idx + j].Kp = heartbeat * leg_command.motor_commands.at(j).kp;
+            SendLowROS.motorCmd[uni_leg_idx + j].Kd = heartbeat * leg_command.motor_commands.at(j).kd;
+        }
+    }
     SendLowLCM = ToLcm(SendLowROS, SendLowLCM);
     roslcm.Send(SendLowLCM);
 
-    return false;
+    return true;
 }
 
 bool A1_Interface::recv(
@@ -84,11 +107,12 @@ bool A1_Interface::recv(
 
     // Converting unitree joints positions and joints velocities
 
-  
-
     uni2quad_data_transform(RecvLowROS, joint_state_msg);
-
     // Quaternion
+    // imu_msg.orientation.x = RecvLowLCM.imu.quaternion[1];
+    // imu_msg.orientation.y = RecvLowLCM.imu.quaternion[2];
+    // imu_msg.orientation.z = RecvLowLCM.imu.quaternion[3];
+    // imu_msg.orientation.w = RecvLowLCM.imu.quaternion[0];
     geometry_msgs::Quaternion orientation_msg;
     tf2::Quaternion quat_tf;
     Eigen::Vector3f rpy;
@@ -98,14 +122,10 @@ bool A1_Interface::recv(
         RecvLowLCM.imu.rpy[2]);
     tf2::convert(quat_tf, orientation_msg);
     imu_msg.orientation = orientation_msg;
-    // // Quaternion
-    // imu_msg.orientation.x = RecvLowLCM.imu.quaternion[1];
-    // imu_msg.orientation.y = RecvLowLCM.imu.quaternion[2];
-    // imu_msg.orientation.z = RecvLowLCM.imu.quaternion[3];
-    // imu_msg.orientation.w = RecvLowLCM.imu.quaternion[0];
-    // imu_msg.header.frame_id = "body";
+    imu_msg.header.frame_id = "body";
 
     // Angular velocities from gyroscope
+    std::cout << "2nd position now  is " << RecvLowROS.motorState[RL_2] << "\n";
     imu_msg.angular_velocity.x = RecvLowLCM.imu.gyroscope[0];
     imu_msg.angular_velocity.y = RecvLowLCM.imu.gyroscope[1];
     imu_msg.angular_velocity.z = RecvLowLCM.imu.gyroscope[2];
@@ -181,23 +201,25 @@ void A1_Interface::quad_2unitree_data_transform(
     cmd.motorCmd[FL_1].tau = torque;
 }
 
-void fill_testLCMmsg_sample(LowState& msg){
+void fill_testLCMmsg_sample(LowState &msg)
+{
     float dx = 0.1;
     Eigen::VectorXd stand_joint_angles{3};
     stand_joint_angles << 0.0, 0.76, 1.52;
-    for(int i =0; i < 12; i++){
-        msg.motorState[i].q = stand_joint_angles[i%3];
+    for (int i = 0; i < 12; i++)
+    {
+        msg.motorState[i].q = stand_joint_angles[i % 3];
         msg.motorState[i].dq = 0;
         msg.motorState[i].tauEst = 0;
     }
     Eigen::VectorXd rpy(3);
-    rpy << 0,0,0;
+    rpy << 0, 0, 0;
     for (int i = 0; i < 3; i++)
         msg.imu.rpy[i] = rpy[i];
-    
-    for (int i = 0; i < 3; i++){
+
+    for (int i = 0; i < 3; i++)
+    {
         msg.imu.gyroscope[i] = 0;
         msg.imu.accelerometer[i] = 0;
     }
 }
-
