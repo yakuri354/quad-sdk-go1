@@ -3,6 +3,7 @@
   <arg name="init_pose"     default="-x 0.0 -y 0.0 -z 0.5"/>
   <arg name="namespace"     default="robot_1"/>
   <arg name="robot_type"    default="spirit"/>
+  <arg name="estimator"     default="comp_filter"/>
 
   <!-- Declare tf prefix for plugins -->
   <param name="tf_prefix"   value="$(arg namespace)" />
@@ -16,6 +17,7 @@
     <arg name="controller" value="$(arg controller)"/>
     <arg name="mocap" value="false"/>
     <arg name="is_hardware" value="true"/>
+    <arg name="estimator" value="$(arg estimator)"/>
   </include>
 
   <!-- Load the contact state publisher -->

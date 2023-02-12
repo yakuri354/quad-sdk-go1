@@ -59,7 +59,7 @@ bool A1_Interface::send(
         quad_msgs::LegCommand leg_command =
             last_leg_command_array_msg.leg_commands.at(i);
 
-        float heartbeat = 0.;
+        float heartbeat = 0.0;
         float phi_0;
         int sign;
         int uni_leg_idx = uni_2quad_foot[i];
@@ -82,7 +82,7 @@ bool A1_Interface::send(
             }
 
             SendLowROS.motorCmd[uni_leg_idx + j].q = (leg_command.motor_commands.at(j).pos_setpoint - phi_0) / sign;
-            std::cout << "For " << j << " joint publishing position = " << (leg_command.motor_commands.at(j).pos_setpoint - phi_0) / sign << "\n";
+            // std::cout << "For " << j << " joint publishing position = " << (leg_command.motor_commands.at(j).pos_setpoint - phi_0) / sign << "\n";
             SendLowROS.motorCmd[uni_leg_idx + j].dq = heartbeat * leg_command.motor_commands.at(j).vel_setpoint / sign;
             SendLowROS.motorCmd[uni_leg_idx + j].tau = heartbeat * leg_command.motor_commands.at(j).torque_ff / sign;
             SendLowROS.motorCmd[uni_leg_idx + j].Kp = heartbeat * leg_command.motor_commands.at(j).kp;
@@ -125,14 +125,14 @@ bool A1_Interface::recv(
     imu_msg.header.frame_id = "body";
 
     // Angular velocities from gyroscope
-    std::cout << "2nd position now  is " << RecvLowROS.motorState[RL_2] << "\n";
-    imu_msg.angular_velocity.x = RecvLowLCM.imu.gyroscope[0];
-    imu_msg.angular_velocity.y = RecvLowLCM.imu.gyroscope[1];
-    imu_msg.angular_velocity.z = RecvLowLCM.imu.gyroscope[2];
+    // std::cout << "2nd position now  is " << RecvLowROS.motorState[RL_2] << "\n";
+    imu_msg.angular_velocity.x = 0.; // RecvLowLCM.imu.gyroscope[0];
+    imu_msg.angular_velocity.y = 0.; // RecvLowLCM.imu.gyroscope[1];
+    imu_msg.angular_velocity.z = 0.; // RecvLowLCM.imu.gyroscope[2];
     // Linear velocities form acceleremeter
-    imu_msg.linear_acceleration.x = RecvLowLCM.imu.accelerometer[0];
-    imu_msg.linear_acceleration.y = RecvLowLCM.imu.accelerometer[1];
-    imu_msg.linear_acceleration.z = RecvLowLCM.imu.accelerometer[2];
+    imu_msg.linear_acceleration.x = 0.; // RecvLowLCM.imu.accelerometer[0];
+    imu_msg.linear_acceleration.y = 0.; // RecvLowLCM.imu.accelerometer[1];
+    imu_msg.linear_acceleration.z = 0.; // RecvLowLCM.imu.accelerometer[2];
 
     return true;
 }

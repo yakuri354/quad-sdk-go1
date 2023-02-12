@@ -9,6 +9,7 @@
     <arg name="dash" default="false" />
     <arg name="map_input_type" default="mesh" />
     <arg name="world" default="flat" />
+    <arg name="estimator" default="unitree_estimator" />
 
     <!-- Launch the mapping and visualization nodes -->
     <include file="$(find quad_utils)/launch/mapping.launch">
@@ -28,6 +29,7 @@
                 <arg name="controller" default="$(arg controller)" />
                 <arg name="init_pose" value="-x 0.0 -y 0.0 -z 0.5" />
                 <arg name="namespace" value="robot_1" />
+                <arg name="estimator" value="$(arg estimator)" />
         </include>
         <param name="robot_type" value="$(arg robot_type)" />
     </group>

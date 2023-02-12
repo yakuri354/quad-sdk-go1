@@ -80,6 +80,7 @@ add_library(robot_driver
   src/estimators/state_estimator.cpp
   src/estimators/comp_filter_estimator.cpp
   src/estimators/ekf_estimator.cpp
+  src/estimators/unitree_estimator.cpp
   src/hardware_interfaces/hardware_interface.cpp
   src/hardware_interfaces/spirit_interface.cpp
   src/hardware_interfaces/a1_interface.cpp
