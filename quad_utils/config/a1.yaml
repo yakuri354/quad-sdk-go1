@@ -7,7 +7,7 @@ global_body_planner:
   robot_l: 0.3                            # Length of robot body, m
   robot_w: 0.3                            # Width of robot body, m
   robot_h: 0.05                           # Vertical distance between leg base and bottom of robot, m
-  mass: 13.7                              # Robot mass, kg
+  mass: 12.0                              # Robot mass, kg
   grf_min: 4.0                            # Minimum GRF in units of body weight (only used for sampling)
   grf_max: 5.0                            # Maximum GRF in units of body weight
 
@@ -73,5 +73,5 @@ robot_driver:
   safety_kp: [0, 0, 0]
   safety_kd: [2, 2, 2]
   stand_joint_angles: [0.0, 0.76, 1.52]
-  sit_joint_angles: [0.0, 0.2, 0.3]
-  torque_limit: [33.5, 33.5, 33.5]
+  sit_joint_angles: [0.0, 0.2, 0.3] # or maybe [0.0, 0.2, 0.2]
+  torque_limit: [23.7, 23.7, 33.5]

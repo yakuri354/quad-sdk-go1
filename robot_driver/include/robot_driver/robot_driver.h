@@ -30,6 +30,7 @@
 #include "robot_driver/hardware_interfaces/hardware_interface.h"
 #include "robot_driver/hardware_interfaces/spirit_interface.h"
 #include "robot_driver/hardware_interfaces/a1_interface.h"
+#include "robot_driver/hardware_interfaces/go1_interface.h"
 #include "robot_driver/robot_driver_utils.h"
 
 #define MATH_PI 3.141592

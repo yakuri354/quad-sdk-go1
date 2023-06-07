@@ -27,6 +27,7 @@ RobotDriver::RobotDriver(ros::NodeHandle nh, int argc, char **argv)
   quad_utils::loadROSParam(nh_, "topics/control/joint_command",
                            leg_command_array_topic);
   quad_utils::loadROSParam(nh_, "topics/control/mode", control_mode_topic);
+  ROS_INFO("Control topic %s", control_mode_topic.c_str());
   quad_utils::loadROSParam(nh_, "topics/control/single_joint_command",
                            single_joint_cmd_topic);
   quad_utils::loadROSParam(nh_, "topics/control/restart_flag",
@@ -119,13 +120,17 @@ RobotDriver::RobotDriver(ros::NodeHandle nh, int argc, char **argv)
   {
     if (robot_name == "spirit")
     {
-      hardware_interface_ = std::make_shared<SpiritInterface>();
+      hardware_interface_ = std::make_shared<SpiritInterface>(nh);
       ROS_WARN_STREAM("Initilised SpiritInterface");
     }
-    else if (robot_name == "a1")
-    {
-      hardware_interface_ = std::make_shared<A1_Interface>();
-      ROS_WARN_STREAM("Initilised A1_Interface");
+    // else if (robot_name == "a1")
+    // {
+    //   hardware_interface_ = std::make_shared<A1_Interface>(nh);
+    //   ROS_WARN_STREAM("Initilised A1_Interface");
+    // }
+    else if (robot_name == "a1") { // TODO FIXME
+      hardware_interface_ = std::make_shared<Go1Interface>(nh);
+      ROS_INFO("Successfully created Go1Interface");
     }
     else
     {
@@ -230,6 +235,7 @@ void RobotDriver::initStateControlStructs()
 
 void RobotDriver::controlModeCallback(const std_msgs::UInt8::ConstPtr &msg)
 {
+  ROS_INFO("Switching control mode from %d to %d", control_mode_, msg->data);
   // Wait if transitioning
   if ((control_mode_ == SIT_TO_READY) || (control_mode_ == READY_TO_SIT))
     return;
@@ -648,7 +654,7 @@ void RobotDriver::publishControl(bool is_valid)
     hardware_interface_->send(leg_command_array_msg_, user_tx_data_);
     ros::Time t_end = ros::Time::now();
 
-    ROS_INFO_THROTTLE(1.0, "t_diff_mb_send = %6.4f", (t_end - t_start).toSec());
+    // ROS_INFO_THROTTLE(1.0, "t_diff_mb_send = %6.4f", (t_end - t_start).toSec());
   }
 }
 

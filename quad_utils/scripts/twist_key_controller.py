@@ -8,7 +8,7 @@ from std_msgs.msg import UInt8
 def run():
     rospy.init_node('twist_key_controller', anonymous=True)
     
-    twist_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
+    twist_pub = rospy.Publisher('/robot_1/cmd_vel', Twist, queue_size=1)
     control_mode_pub = rospy.Publisher('/control/mode', UInt8, queue_size=1)
 
     lin_vel = 0.5

@@ -1,14 +1,15 @@
+#define A1_INTERFACE_H
 #ifndef A1_INTERFACE_H
 #define A1_INTERFACE_H
 
 #include <robot_driver/hardware_interfaces/hardware_interface.h>
 #include "unitree_legged_sdk/unitree_legged_sdk.h"
-#include "unitree_legged_sdk/unitree_joystick.h"
+// #include "unitree_legged_sdk/unitree_joystick.h"
 #include <unitree_legged_msgs/LowCmd.h>
 #include <unitree_legged_msgs/LowState.h>
 #include <boost/thread.hpp>
 #include <boost/thread/mutex.hpp>
-#include <unitree_convert.h>
+// #include <unitree_convert.h>
 #include <map>
 #include <tuple>
 #include <vector>
@@ -21,7 +22,7 @@ public:
      * @brief Constructor for A1_Interface
      * @return Constructed object of type A1_Interface
      */
-    A1_Interface();
+    A1_Interface(ros::NodeHandle nh);
 
     /**
      * @brief Load the hardware interface

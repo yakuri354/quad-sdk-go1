@@ -1,7 +1,6 @@
-/************************************************************************
-Copyright (c) 2020, Unitree Robotics.Co.Ltd. All rights reserved.
-Use of this source code is governed by the MPL-2.0 license, see LICENSE.
-************************************************************************/
+/**********************************************************************
+ Copyright (c) 2020-2023, Unitree Robotics.Co.Ltd. All rights reserved.
+***********************************************************************/
 
 #ifndef _UNITREE_LEGGED_LOOP_H_
 #define _UNITREE_LEGGED_LOOP_H_
@@ -15,22 +14,22 @@ Use of this source code is governed by the MPL-2.0 license, see LICENSE.
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 
-namespace UNITREE_LEGGED_SDK 
-{
+namespace UNITREE_LEGGED_SDK {
 
-constexpr int THREAD_PRIORITY    = 99;   // real-time priority
+constexpr int THREAD_PRIORITY = 95;  // real-time priority
 
-typedef boost::function<void ()> Callback;
+typedef boost::function<void()> Callback;
 
 class Loop {
-public:
-  Loop(std::string name, float period, int bindCPU = -1):_name(name), _period(period), _bindCPU(bindCPU) {}
+ public:
+  Loop(std::string name, float period, int bindCPU = -1)
+      : _name(name), _period(period), _bindCPU(bindCPU) {}
   ~Loop();
   void start();
   void shutdown();
   virtual void functionCB() = 0;
 
-private:
+ private:
   void entryFunc();
 
   std::string _name;
@@ -41,18 +40,22 @@ private:
   std::thread _thread;
 };
 
+/*
+  period     unit:second
+  bindCPU    change the CPU affinity of this thread
+*/
 class LoopFunc : public Loop {
-public:
+ public:
   LoopFunc(std::string name, float period, const Callback& _cb)
-    : Loop(name, period), _fp(_cb){}
+      : Loop(name, period), _fp(_cb) {}
   LoopFunc(std::string name, float period, int bindCPU, const Callback& _cb)
-    : Loop(name, period, bindCPU), _fp(_cb){}
+      : Loop(name, period, bindCPU), _fp(_cb) {}
   void functionCB() { (_fp)(); }
-private:
-  boost::function<void ()>  _fp;
+
+ private:
+  boost::function<void()> _fp;
 };
 
-
-}
+}  // namespace UNITREE_LEGGED_SDK
 
 #endif

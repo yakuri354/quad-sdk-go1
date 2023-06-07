@@ -23,7 +23,7 @@ void *update_loop(void *param)
     }
 }
 
-A1_Interface::A1_Interface() : roslcm(LOWLEVEL)
+A1_Interface::A1_Interface(ros::NodeHandle nh) : roslcm(LOWLEVEL), HardwareInterface(nh)
 {
 
     roslcm.SubscribeState();
