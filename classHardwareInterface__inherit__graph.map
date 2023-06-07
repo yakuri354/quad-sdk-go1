@@ -1,0 +1,5 @@
+<map id="HardwareInterface" name="HardwareInterface">
+<area shape="rect" id="node1" title="Implements an abstract class for robot hardware interfaces." alt="" coords="51,5,180,31"/>
+<area shape="rect" id="node2" href="$classGo1Interface.html" title=" " alt="" coords="5,79,103,104"/>
+<area shape="rect" id="node3" href="$classSpiritInterface.html" title="Hardware interface for the Spirit40 quadruped from Ghost Robotics." alt="" coords="127,79,229,104"/>
+</map>

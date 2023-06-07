@@ -1,0 +1,45 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" title=" " alt="" coords="5,749,124,774"/>
+<area shape="rect" id="node2" href="$classhandle.html" title=" " alt="" coords="172,749,232,774"/>
+<area shape="rect" id="node3" href="$classargs__proxy.html" title=" " alt="" coords="289,699,373,725"/>
+<area shape="rect" id="node4" href="$classkwargs__proxy.html" title=" " alt="" coords="280,749,381,774"/>
+<area shape="rect" id="node5" href="$classobject.html" title=" " alt="" coords="302,798,359,823"/>
+<area shape="rect" id="node6" href="$classbool__.html" title=" " alt="" coords="504,58,557,83"/>
+<area shape="rect" id="node7" href="$classbuffer.html" title=" " alt="" coords="503,107,558,133"/>
+<area shape="rect" id="node11" href="$classbytes.html" title=" " alt="" coords="504,157,557,182"/>
+<area shape="rect" id="node12" href="$classcapsule.html" title=" " alt="" coords="497,206,564,231"/>
+<area shape="rect" id="node13" href="$classconftest_1_1Capture.html" title=" " alt="" coords="472,255,589,281"/>
+<area shape="rect" id="node14" href="$classconftest_1_1Output.html" title=" " alt="" coords="475,305,586,330"/>
+<area shape="rect" id="node16" href="$classconftest_1_1SanitizedString.html" title=" " alt="" coords="451,354,610,379"/>
+<area shape="rect" id="node17" href="$classdict.html" title=" " alt="" coords="509,403,552,429"/>
+<area shape="rect" id="node19" href="$classdtype.html" title=" " alt="" coords="504,453,557,478"/>
+<area shape="rect" id="node20" href="$classellipsis.html" title=" " alt="" coords="499,502,562,527"/>
+<area shape="rect" id="node21" href="$classexception.html" title=" " alt="" coords="469,551,592,577"/>
+<area shape="rect" id="node22" href="$classfloat__.html" title=" " alt="" coords="504,601,557,626"/>
+<area shape="rect" id="node23" href="$classfunction.html" title=" " alt="" coords="497,650,565,675"/>
+<area shape="rect" id="node25" href="$classgeneric__type.html" title="Generic support for creating new Python heap types." alt="" coords="483,699,578,725"/>
+<area shape="rect" id="node26" href="$classint__.html" title=" " alt="" coords="509,749,552,774"/>
+<area shape="rect" id="node27" href="$classiterable.html" title=" " alt="" coords="499,798,563,823"/>
+<area shape="rect" id="node28" href="$classiterator.html" title=" " alt="" coords="499,847,562,873"/>
+<area shape="rect" id="node29" href="$classlist.html" title=" " alt="" coords="511,897,550,922"/>
+<area shape="rect" id="node30" href="$classmemoryview.html" title=" " alt="" coords="483,946,578,971"/>
+<area shape="rect" id="node31" href="$classmodule__.html" title="Wrapper for Python extension modules." alt="" coords="495,995,566,1021"/>
+<area shape="rect" id="node32" href="$classnone.html" title=" " alt="" coords="505,1045,556,1070"/>
+<area shape="rect" id="node33" href="$classpybind11_1_1setup__helpers_1_1ParallelCompile.html" title=" " alt="" coords="429,1095,632,1135"/>
+<area shape="rect" id="node34" href="$classsequence.html" title=" " alt="" coords="491,1159,570,1185"/>
+<area shape="rect" id="node35" href="$classset.html" title=" " alt="" coords="511,1209,551,1234"/>
+<area shape="rect" id="node36" href="$classslice.html" title=" " alt="" coords="506,1258,555,1283"/>
+<area shape="rect" id="node37" href="$classstaticmethod.html" title=" " alt="" coords="482,1307,579,1333"/>
+<area shape="rect" id="node38" href="$classstr.html" title=" " alt="" coords="511,1357,550,1382"/>
+<area shape="rect" id="node39" href="$classtuple.html" title=" " alt="" coords="505,1406,556,1431"/>
+<area shape="rect" id="node41" href="$classtype.html" title=" " alt="" coords="507,1455,554,1481"/>
+<area shape="rect" id="node42" href="$classweakref.html" title=" " alt="" coords="497,1505,565,1530"/>
+<area shape="rect" id="node43" href="$classxacro_1_1QuickLexer.html" title=" " alt="" coords="469,1554,592,1579"/>
+<area shape="rect" id="node8" href="$classarray.html" title=" " alt="" coords="721,107,771,133"/>
+<area shape="rect" id="node9" href="$classarray__t.html" title=" " alt="" coords="860,5,1059,133"/>
+<area shape="rect" id="node10" href="$classarray__t.html" title=" " alt="" coords="880,158,1039,183"/>
+<area shape="rect" id="node15" href="$classconftest_1_1Unordered.html" title=" " alt="" coords="680,305,812,330"/>
+<area shape="rect" id="node18" href="$classkwargs.html" title=" " alt="" coords="714,403,778,429"/>
+<area shape="rect" id="node24" href="$classcpp__function.html" title="Wraps an arbitrary C++ function/method/lambda function/.. into a callable Python object." alt="" coords="698,650,794,675"/>
+<area shape="rect" id="node40" href="$classargs.html" title=" " alt="" coords="723,1406,769,1431"/>
+</map>

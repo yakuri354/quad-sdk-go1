@@ -1,0 +1,8 @@
+<map id="type_caster&lt; std::shared_ptr&lt; T &gt; &gt;" name="type_caster&lt; std::shared_ptr&lt; T &gt; &gt;">
+<area shape="rect" id="node1" title="Specialize for the common std::shared_ptr, so users don&#39;t need to." alt="" coords="11,420,174,460"/>
+<area shape="rect" id="node2" href="$structcopyable__holder__caster.html" title=" " alt="" coords="5,331,180,371"/>
+<area shape="rect" id="node3" href="$classtype__caster__base.html" title="Generic type caster for objects stored on the heap." alt="" coords="7,256,178,281"/>
+<area shape="rect" id="node4" href="$classtype__caster__generic.html" title=" " alt="" coords="23,181,162,207"/>
+<area shape="rect" id="node5" href="$structtype__info.html" title=" " alt="" coords="55,93,130,119"/>
+<area shape="rect" id="node6" href="$structbuffer__info.html" title="Information record describing a Python buffer object." alt="" coords="51,5,134,31"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="UserType" name="UserType">
+<area shape="rect" id="node1" title="A user&#45;defined type which is exported and can be used by any test." alt="" coords="5,5,84,31"/>
+<area shape="rect" id="node2" href="$classIncType.html" title="Like UserType, but increments value on copy for quick reference vs. copy tests." alt="" coords="11,79,79,104"/>
+</map>

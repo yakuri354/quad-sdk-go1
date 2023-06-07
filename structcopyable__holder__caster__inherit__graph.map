@@ -1,0 +1,5 @@
+<map id="copyable_holder_caster&lt; type, holder_type &gt;" name="copyable_holder_caster&lt; type, holder_type &gt;">
+<area shape="rect" id="node1" title="Type caster for holder types like std::shared_ptr, etc." alt="" coords="11,152,170,192"/>
+<area shape="rect" id="node2" href="$classtype__caster__base.html" title="Generic type caster for objects stored on the heap." alt="" coords="5,79,176,104"/>
+<area shape="rect" id="node3" href="$classtype__caster__generic.html" title=" " alt="" coords="21,5,160,31"/>
+</map>
