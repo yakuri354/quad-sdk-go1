@@ -261,6 +261,8 @@ void RobotDriver::controlModeCallback(const std_msgs::UInt8::ConstPtr &msg)
 void RobotDriver::singleJointCommandCallback(
     const geometry_msgs::Vector3::ConstPtr &msg)
 {
+  ROS_WARN_THROTTLE(1.0, "Ignoring single joint cmd");
+  return;
   if (JointController *c =
           dynamic_cast<JointController *>(leg_controller_.get()))
   {
@@ -276,6 +278,8 @@ void RobotDriver::controlRestartFlagCallback(
 
 void RobotDriver::localPlanCallback(const quad_msgs::RobotPlan::ConstPtr &msg)
 {
+  ROS_WARN_THROTTLE(1.0, "Ignoring local plan");
+  return;
   last_local_plan_msg_ = msg;
 
   ros::Time t_now = ros::Time::now();
@@ -423,7 +427,7 @@ bool RobotDriver::updateControl()
 {
   // Check if state machine should be skipped
   bool valid_cmd = true;
-  if (leg_controller_->overrideStateMachine())
+  if (leg_controller_->overrideStateMachine()) // Apparently always false?
   {
     valid_cmd = leg_controller_->computeLegCommandArray(
         last_robot_state_msg_, leg_command_array_msg_, grf_array_msg_);
@@ -602,16 +606,14 @@ bool RobotDriver::updateControl()
 
       if (abs(cmd.torque_ff) >= torque_limits_[j])
       {
-        ROS_WARN(
-            "Leg %d motor %d: ff effort = %5.3f Nm exceeds threshold of %5.3f "
-            "Nm",
+        ROS_WARN_THROTTLE(1.0,
+            "Leg %d motor %d: ff effort = %5.3f Nm exceeds threshold of %5.3f Nm",
             i, j, cmd.torque_ff, torque_limits_[j]);
       }
       if (abs(effort) >= torque_limits_[j])
       {
-        ROS_WARN(
-            "Leg %d motor %d: total effort = %5.3f Nm exceeds threshold of "
-            "%5.3f Nm",
+        ROS_WARN_THROTTLE(1.0,
+            "Leg %d motor %d: total effort = %5.3f Nm exceeds threshold of %5.3f Nm",
             i, j, effort, torque_limits_[j]);
         effort =
             std::min(std::max(effort, -torque_limits_[j]), torque_limits_[j]);

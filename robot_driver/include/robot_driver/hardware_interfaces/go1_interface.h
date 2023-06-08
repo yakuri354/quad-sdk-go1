@@ -29,6 +29,9 @@ public:
 
 private:
     LowCmd default_cmd;
+    ros::NodeHandle dbg_nh;
+    ros::Publisher dbg_pub_cmd;
+    ros::Publisher dbg_pub_state;
 
     UDP udp;
 
