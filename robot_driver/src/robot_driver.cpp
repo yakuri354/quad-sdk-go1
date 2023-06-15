@@ -261,8 +261,8 @@ void RobotDriver::controlModeCallback(const std_msgs::UInt8::ConstPtr &msg)
 void RobotDriver::singleJointCommandCallback(
     const geometry_msgs::Vector3::ConstPtr &msg)
 {
-  ROS_WARN_THROTTLE(1.0, "Ignoring single joint cmd");
-  return;
+  // ROS_WARN_THROTTLE(1.0, "Ignoring single joint cmd");
+  // return;
   if (JointController *c =
           dynamic_cast<JointController *>(leg_controller_.get()))
   {
@@ -278,8 +278,8 @@ void RobotDriver::controlRestartFlagCallback(
 
 void RobotDriver::localPlanCallback(const quad_msgs::RobotPlan::ConstPtr &msg)
 {
-  ROS_WARN_THROTTLE(1.0, "Ignoring local plan");
-  return;
+  // ROS_WARN_THROTTLE(1.0, "Ignoring local plan");
+  // return;
   last_local_plan_msg_ = msg;
 
   ros::Time t_now = ros::Time::now();

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.2)
 project(nmpc_controller)
 
 ## Compile as C++14, supported in ROS Melodic and newer
-add_compile_options(-std=c++14 -ffast-math)
+add_compile_options(-std=c++14 -ffast-math -g -O0)
   
 ## Set default cmake build type to release
 if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)

@@ -357,7 +357,7 @@ bool Go1Interface::recv(sensor_msgs::JointState &joint_state_msg, sensor_msgs::I
 
   imu_msg.linear_acceleration.x = state.imu.accelerometer[0];
   imu_msg.linear_acceleration.y = state.imu.accelerometer[1];
-  imu_msg.linear_acceleration.z = state.imu.accelerometer[2];
+  imu_msg.linear_acceleration.z = state.imu.accelerometer[2] - 9.8;
 
   imu_msg.angular_velocity.x = state.imu.gyroscope[0];
   imu_msg.angular_velocity.y = state.imu.gyroscope[1];

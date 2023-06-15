@@ -31,6 +31,7 @@ quadNLP::quadNLP(SystemID default_system, int N, double dt, double mu,
   // feet location initialized by nominal position
   foot_pos_body_ = Eigen::MatrixXd(N_, 12);
   foot_pos_world_ = Eigen::MatrixXd(N_, 12);
+  std::cerr << "N_ = " << N_ << std::endl;
   foot_vel_world_ = Eigen::MatrixXd(N_, 12).setZero();
   for (int i = 0; i < N_; ++i) {
     foot_pos_body_.row(i) << -0.2263, -0.098, -0.3, -0.2263, 0.098, -0.3,
@@ -215,6 +216,8 @@ bool quadNLP::get_bounds_info_single_complex_fe(
       g_ub.segment(g_mm_idx + n_joints_ / 2 + 3 * j, 3).fill(2e19);
     }
   }
+
+  return true;
 }
 
 // Returns the variable bounds

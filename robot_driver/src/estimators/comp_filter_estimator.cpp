@@ -118,9 +118,9 @@ bool CompFilterEstimator::updateOnce(
   //std::cout << "New header" << last_imu_msg_.header.stamp << std::endl;
 
   // TODO FIXME
-  for (int i = 0; i < 4; i++) {
-    last_robot_state_msg_.feet.feet[i].velocity.z -= 9.8;
-  }
+  // for (int i = 0; i < 4; i++) {
+  //   last_robot_state_msg_.feet.feet[i].velocity.z -= 9.8;
+  // }
 
   return true;
 }
