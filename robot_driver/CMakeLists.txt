@@ -88,6 +88,7 @@ add_library(robot_driver
   src/hardware_interfaces/spirit_interface.cpp
   # src/hardware_interfaces/a1_interface.cpp
   src/hardware_interfaces/go1_interface.cpp
+  src/estimators/realsense_estimator.cpp
 )
 add_dependencies(robot_driver ${robot_driver_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 

@@ -26,6 +26,8 @@ LocalPlanner::LocalPlanner(ros::NodeHandle nh)
   quad_utils::loadROSParam(nh_, "/map_frame", map_frame_);
   quad_utils::loadROSParam(nh_, "topics/control/mode", control_mode_topic);
 
+  ROS_INFO_STREAM("Local planner robot type: " << robot_name_);
+
   // Setup pubs and subs
   terrain_map_sub_ = nh_.subscribe(terrain_map_topic, 1,
                                    &LocalPlanner::terrainMapCallback, this);

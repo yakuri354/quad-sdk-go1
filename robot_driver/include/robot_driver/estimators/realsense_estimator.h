@@ -30,13 +30,14 @@ class RealsenseEstimator : public StateEstimator {
    * @brief Update Realsense data
    * @param[in] odom The odometry message published by Realsense
    */
-  void updateOdomMsg(nav_msgs::Odometry& odom);
+  void updateOdomMsg(const nav_msgs::Odometry::ConstPtr &odom);
 
  private:
   /// Nodehandle to get param
   ros::NodeHandle nh_;
 
   nav_msgs::Odometry last_odom;
+
   ros::Time last_odom_upd_time;
 };
 

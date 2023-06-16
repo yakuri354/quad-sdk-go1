@@ -26,6 +26,7 @@
 #include "robot_driver/estimators/comp_filter_estimator.h"
 #include "robot_driver/estimators/ekf_estimator.h"
 #include "robot_driver/estimators/unitree_estimator.h"
+#include "robot_driver/estimators/realsense_estimator.h"
 #include "robot_driver/estimators/state_estimator.h"
 #include "robot_driver/hardware_interfaces/hardware_interface.h"
 #include "robot_driver/hardware_interfaces/spirit_interface.h"
@@ -99,6 +100,12 @@ private:
    void mocapCallback(const geometry_msgs::PoseStamped::ConstPtr &msg);
 
    /**
+    * @brief Callback function to handle current robot pose from realsense
+    * @param[in] msg input message contining current robot pose
+    */
+   void realsenseCallback(const nav_msgs::Odometry::ConstPtr &odom);
+
+   /**
     * @brief Callback function to handle reference trajectory state
     * @param[in] msg input message contining reference trajectory state
     */
@@ -164,6 +171,9 @@ private:
 
    /// ROS subscriber for local plan
    ros::Subscriber mocap_sub_;
+
+   /// ROS subscriber for realsense odometry
+   ros::Subscriber realsense_sub_;
 
    /// ROS subscriber for state estimate
    ros::Subscriber robot_state_sub_;

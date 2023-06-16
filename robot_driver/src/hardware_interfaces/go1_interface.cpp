@@ -202,8 +202,6 @@ std::map<int, float> sign_q2u = {
      {RR_2, 1},
 };
 
-// #define SEND_DBG
-
 bool Go1Interface::send(const quad_msgs::LegCommandArray &leg_command_array_msg, const Eigen::VectorXd &user_tx_data) {
   LowCmd cmd = default_cmd;
 
@@ -216,18 +214,6 @@ bool Go1Interface::send(const quad_msgs::LegCommandArray &leg_command_array_msg,
     {RR_0, RR_1, RR_2},
   };
 
-  // #ifdef SEND_DBG
-  // cout.clear();
-  // cerr.clear();
-  //
-  // cerr << "\e[1;1H\e[2J" << flush;
-  // cerr << fixed << setprecision(4) << setfill(' ');
-  //
-  // LowState state;
-  // udp.Recv();
-  // udp.GetRecv(state);
-  // #endif
-
   dbg_pub_cmd.publish(leg_command_array_msg);
 
   for (int leg = 0; leg < 4; leg++) { // FL, BL, FR, BR
@@ -236,62 +222,19 @@ bool Go1Interface::send(const quad_msgs::LegCommandArray &leg_command_array_msg,
       const auto &quad_cmd = leg_command_array_msg.leg_commands[leg].motor_commands[joint];
       auto &uni_cmd = cmd.motorCmd[uni_ix];
 
-      // #ifdef SEND_DBG
-      // cerr << "At " << dbg[uni_ix] << ' ';
-      //
-      // cerr << "q " << setw(7) << quad_cmd.pos_setpoint << ' ';
-      // cerr << "dq " << setw(7) << quad_cmd.vel_setpoint << ' ';
-      // cerr << "tau " << setw(7) << quad_cmd.torque_ff << ' ';
-      // cerr << "kd " << setw(7) << quad_cmd.kd << ' ';
-      // cerr << "kp " << setw(7) << quad_cmd.kp << ' ';
-      // #endif
-
       uni_cmd.q = offset_q2u[uni_ix] + quad_cmd.pos_setpoint  * sign_q2u[uni_ix];
       uni_cmd.dq = quad_cmd.vel_setpoint * sign_q2u[uni_ix];
       uni_cmd.tau = quad_cmd.torque_ff * sign_q2u[uni_ix];
       uni_cmd.Kp = quad_cmd.kp;
       uni_cmd.Kd = quad_cmd.kd;
-
-      // #ifdef SEND_DBG
-      // cerr << " ---> ";
-      //
-      // cerr << "q " << setw(7) << uni_cmd.q << ' ';
-      // cerr << "dq " << setw(7) << uni_cmd.dq << ' ';
-      // cerr << "tau " << setw(7) << uni_cmd.tau << ' ';
-      // cerr << "kd " << setw(7) << uni_cmd.Kp << ' ';
-      // cerr << "kp " << setw(7) << uni_cmd.Kd << ' ';
-      //
-      // cerr << "    [ ";
-      //
-      // cerr << "q " << setw(7) << state.motorState[uni_ix].q << ' ';
-      // cerr << "dq " << setw(7) << state.motorState[uni_ix].dq << ' ';
-      // cerr << "tau " << setw(7) << state.motorState[uni_ix].tauEst << ' ';
-
-      // cerr << " ] ---> [ ";
-      //
-      // cerr << "q " << setw(7) << (state.motorState[uni_ix].q - offset_q2u[uni_ix]) * sign_q2u[uni_ix] << ' ';
-      // cerr << "dq " << setw(7) << state.motorState[uni_ix].dq * sign_q2u[uni_ix] << ' ';
-      // cerr << "tau " << setw(7) << state.motorState[uni_ix].tauEst * sign_q2u[uni_ix ] << ' ';
-      
-      // cerr << "]\n" << endl;
-
-      // #endif
     }
   }
-
-  // cout.setstate(std::ios_base::failbit);
-  // cerr.setstate(std::ios_base::failbit);
-  
 
   udp.SetSend(cmd);
   udp.Send();
 
-  // cerr << "Sent " << leg_command_array_msg << endl << endl;
-
   return true;
 }
-
-// #define RECV_DBG
 
 bool Go1Interface::recv(sensor_msgs::JointState &joint_state_msg, sensor_msgs::Imu &imu_msg, Eigen::VectorXd &user_rx_data) {
   LowState state;
@@ -299,13 +242,6 @@ bool Go1Interface::recv(sensor_msgs::JointState &joint_state_msg, sensor_msgs::I
   udp.GetRecv(state);
 
   dbg_pub_state.publish(state2rosMsg(state));
-
-// #ifdef RECV_DBG
-//     ios::sync_with_stdio(false);
-//     cerr.tie(nullptr);
-//
-//     cerr << "Recv: " << endl;
-// #endif
 
   std::map<int, string> dbg = {
        {FL_0, "FL_0"},
@@ -321,30 +257,12 @@ bool Go1Interface::recv(sensor_msgs::JointState &joint_state_msg, sensor_msgs::I
        {RR_1, "RR_1"},
        {RR_2, "RR_2"},
   };
-//
-// #ifdef RECV_DBG
-//   cout.clear();
-//   cerr.clear();
-//
-//   cerr << "\e[1;1H\e[2J" << flush;
-//   cerr << fixed << setprecision(4) << setfill(' ');
-//
-//   for (int i = 0; i < 12; i++) {
-//     cerr << "Motor " << i << " --> " << dbg[i] << endl;
-//     cerr << "q " << setw(4) << state.motorState[i].q << ' ';
-//     cerr << "dq " << setw(4) << state.motorState[i].dq << ' ';
-//     cerr << "tau " << setw(4) << state.motorState[i].tauEst << ' ';
-//     cerr << '\n' << endl;
-//   }
-//
-//   cout.setstate(std::ios_base::failbit);
-//   cerr.setstate(std::ios_base::failbit);
-// #endif
 
   if (state.head[0] == 0) {
     ROS_ERROR("Null state received");
     return false;
   }
+
   // Translate IMU data
   
   tf2::Quaternion quat;
@@ -357,7 +275,7 @@ bool Go1Interface::recv(sensor_msgs::JointState &joint_state_msg, sensor_msgs::I
 
   imu_msg.linear_acceleration.x = state.imu.accelerometer[0];
   imu_msg.linear_acceleration.y = state.imu.accelerometer[1];
-  imu_msg.linear_acceleration.z = state.imu.accelerometer[2] - 9.8;
+  imu_msg.linear_acceleration.z = state.imu.accelerometer[2] - 9.81;
 
   imu_msg.angular_velocity.x = state.imu.gyroscope[0];
   imu_msg.angular_velocity.y = state.imu.gyroscope[1];

@@ -2,38 +2,43 @@
 
 RealsenseEstimator::RealsenseEstimator() {}
 
+using KDL::PI;
+
 void RealsenseEstimator::init(ros::NodeHandle& nh) {
   ROS_INFO("Realsense estimator initialized");
   nh_ = nh;
 }
 
 bool RealsenseEstimator::updateOnce(quad_msgs::RobotState& last_robot_state_msg) {
+  if (last_odom_upd_time.is_zero()) {
+    ROS_WARN("updateOnce called before receiving Realsense data");
+  }
+
   ros::Time state_timestamp = ros::Time::now();
 
-  // TODO
-  //
-  // Transform the coordinate frame
-  // The camera is fixed to the body facing upwards
-  // last_robot_state_msg.body.pose.position.z = last_odom.pose.pose.position.x;
-  // last_robot_state_msg.body.pose.position.x = -last_odom.pose.pose.position.z;
-  // last_robot_state_msg.body.pose.position.y = last_odom.pose.pose.position.y;
+  last_robot_state_msg.body.pose.position.x = -last_odom.pose.pose.position.x;
+  last_robot_state_msg.body.pose.position.y = -last_odom.pose.pose.position.y;
+  last_robot_state_msg.body.pose.position.z = last_odom.pose.pose.position.z;
 
-  // tf2::Quaternion quat;
-  // quat.setW(last_odom.pose.pose.orientation.w);
-  // quat.setX(last_odom.pose.pose.orientation.x);
-  // quat.setY(last_odom.pose.pose.orientation.y);
-  // quat.setZ(last_odom.pose.pose.orientation.z);
-
-  // Assume that the realsense odometry data is already in global ROS coordinate frame
-  last_robot_state_msg.body.pose.position = last_odom.pose.pose.position;
-
-  tf2::Quaternion quat, rot;
+  tf2::Quaternion init_inverse(0.707, 0, 0.707, 0);
+  tf2::Quaternion quat;
 
   tf2::fromMsg(last_odom.pose.pose.orientation, quat);
 
-  rot.setRPY(0, KDL::PI / 2, 0);
+  tf2::Quaternion rot = (quat * init_inverse).normalized();
 
-  last_robot_state_msg.body.pose.orientation = tf2::toMsg(quat * rot);
+  tf2::Matrix3x3 m(rot);
+  double roll, pitch, yaw;
+  m.getRPY(roll, pitch, yaw);
+
+  pitch *= -1;
+  roll *= -1;
+
+  tf2::Quaternion rot2;
+
+  rot2.setRPY(roll, pitch, yaw);
+
+  last_robot_state_msg.body.pose.orientation = tf2::toMsg(rot2);
 
   last_robot_state_msg.body.twist.angular = last_odom.twist.twist.angular;
   last_robot_state_msg.body.twist.linear = last_odom.twist.twist.linear;
@@ -50,7 +55,7 @@ bool RealsenseEstimator::updateOnce(quad_msgs::RobotState& last_robot_state_msg)
   return true;
 }
 
-void RealsenseEstimator::updateOdomMsg(nav_msgs::Odometry &odom) {
-  last_odom = odom;
+void RealsenseEstimator::updateOdomMsg(const nav_msgs::Odometry::ConstPtr &odom) {
+  last_odom = *odom.get();
   last_odom_upd_time = ros::Time::now();
 }

@@ -169,7 +169,7 @@ NMPCController::NMPCController(ros::NodeHandle &nh, int robot_id) {
                   enable_mixed_complexity_);
 
   // Adaptive complexity is only supported for Spirit
-  if (robot_ns_ != "spirit") enable_mixed_complexity_ = false;
+  // if (robot_ns_ != "spirit") enable_mixed_complexity_ = false;
 
   // If mixed complexity is enabled, load the desired structures
   if (enable_mixed_complexity_) {

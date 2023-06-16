@@ -11,7 +11,7 @@ RobotDriver::RobotDriver(ros::NodeHandle nh, int argc, char **argv)
       robot_state_topic, trajectory_state_topic, local_plan_topic,
       leg_command_array_topic, control_mode_topic, remote_heartbeat_topic,
       robot_heartbeat_topic, single_joint_cmd_topic, mocap_topic,
-      control_restart_flag_topic;
+      realsense_topic, control_restart_flag_topic;
   quad_utils::loadROSParam(nh_, "robot_driver/robot_type", robot_name);
   quad_utils::loadROSParam(nh_, "topics/state/imu", imu_topic);
   quad_utils::loadROSParam(nh_, "topics/state/joints", joint_state_topic);
@@ -33,6 +33,7 @@ RobotDriver::RobotDriver(ros::NodeHandle nh, int argc, char **argv)
   quad_utils::loadROSParam(nh_, "topics/control/restart_flag",
                            control_restart_flag_topic);
   quad_utils::loadROSParam(nh_, "topics/mocap", mocap_topic);
+  quad_utils::loadROSParamDefault(nh_, "topics/realsense", realsense_topic, std::string("/camera/odom/sample"));
 
   quad_utils::loadROSParamDefault(nh_, "robot_driver/is_hardware", is_hardware_,
                                   true);
@@ -40,7 +41,7 @@ RobotDriver::RobotDriver(ros::NodeHandle nh, int argc, char **argv)
                                   controller_id_,
                                   std::string("inverse_dynamics"));
   quad_utils::loadROSParamDefault(nh_, "robot_driver/estimator", estimator_id_,
-                                  std::string("comp_filter"));
+                                  std::string("realsense"));
   quad_utils::loadROSParam(nh_, "/robot_driver/update_rate", update_rate_);
   quad_utils::loadROSParam(nh_, "/robot_driver/publish_rate", publish_rate_);
   quad_utils::loadROSParam(nh_, "/robot_driver/mocap_rate", mocap_rate_);
@@ -98,6 +99,10 @@ RobotDriver::RobotDriver(ros::NodeHandle nh, int argc, char **argv)
     ROS_INFO("Loading hardware robot driver");
     mocap_sub_ = nh_.subscribe(mocap_topic, 1000, &RobotDriver::mocapCallback,
                                this, ros::TransportHints().tcpNoDelay(true));
+    if (estimator_id_ == "realsense") {
+      realsense_sub_ = nh_.subscribe(realsense_topic, 1000, &RobotDriver::realsenseCallback,
+                                     this, ros::TransportHints().tcpNoDelay(true));
+    }
     robot_state_pub_ =
         nh_.advertise<quad_msgs::RobotState>(robot_state_topic, 1);
     imu_pub_ = nh_.advertise<sensor_msgs::Imu>(imu_topic, 1);
@@ -118,6 +123,7 @@ RobotDriver::RobotDriver(ros::NodeHandle nh, int argc, char **argv)
   // Initialize hardware interface
   if (is_hardware_)
   {
+    ROS_INFO_STREAM("Robot type: " << robot_name);
     if (robot_name == "spirit")
     {
       hardware_interface_ = std::make_shared<SpiritInterface>(nh);
@@ -165,6 +171,7 @@ RobotDriver::RobotDriver(ros::NodeHandle nh, int argc, char **argv)
 
 void RobotDriver::initStateEstimator()
 {
+  ROS_INFO_STREAM("Loading estimator: " << estimator_id_);
   if (estimator_id_ == "comp_filter")
   {
     state_estimator_ = std::make_shared<CompFilterEstimator>();
@@ -172,6 +179,10 @@ void RobotDriver::initStateEstimator()
   else if (estimator_id_ == "ekf_filter")
   {
     state_estimator_ = std::make_shared<EKFEstimator>();
+  }
+  else if (estimator_id_ == "realsense")
+  {
+    state_estimator_ = std::make_shared<RealsenseEstimator>();
   }
   else if (estimator_id_ == "unitree_estimator")
   {
@@ -261,8 +272,8 @@ void RobotDriver::controlModeCallback(const std_msgs::UInt8::ConstPtr &msg)
 void RobotDriver::singleJointCommandCallback(
     const geometry_msgs::Vector3::ConstPtr &msg)
 {
-  // ROS_WARN_THROTTLE(1.0, "Ignoring single joint cmd");
-  // return;
+  ROS_WARN_THROTTLE(1.0, "Ignoring single joint cmd");
+  return;
   if (JointController *c =
           dynamic_cast<JointController *>(leg_controller_.get()))
   {
@@ -278,8 +289,8 @@ void RobotDriver::controlRestartFlagCallback(
 
 void RobotDriver::localPlanCallback(const quad_msgs::RobotPlan::ConstPtr &msg)
 {
-  // ROS_WARN_THROTTLE(1.0, "Ignoring local plan");
-  // return;
+  ROS_WARN_THROTTLE(1.0, "Ignoring local plan");
+  return;
   last_local_plan_msg_ = msg;
 
   ros::Time t_now = ros::Time::now();
@@ -287,6 +298,13 @@ void RobotDriver::localPlanCallback(const quad_msgs::RobotPlan::ConstPtr &msg)
       (t_now - last_local_plan_msg_->state_timestamp).toSec();
 
   leg_controller_->updateLocalPlanMsg(last_local_plan_msg_, t_now);
+}
+
+
+void RobotDriver::realsenseCallback(const nav_msgs::Odometry::ConstPtr &odom) {
+  if (auto *est = dynamic_cast<RealsenseEstimator*>(state_estimator_.get())) {
+    est->updateOdomMsg(odom);
+  }
 }
 
 void RobotDriver::mocapCallback(
